@@ -1,10 +1,6 @@
 import supabase from "../config/supabase.js";
 import { ApiError } from "../utils/apiResponse.js";
 
-/**
- * Creates the linked volunteer profile row for a newly registered user.
- * Called immediately after createUser() during registration.
- */
 const createVolunteerProfile = async (userId) => {
   const { data, error } = await supabase
     .from("volunteers")
@@ -19,9 +15,6 @@ const createVolunteerProfile = async (userId) => {
   return data;
 };
 
-/**
- * Finds a volunteer profile by the linked user_id.
- */
 const findVolunteerByUserId = async (userId) => {
   const { data, error } = await supabase
     .from("volunteers")
@@ -36,4 +29,66 @@ const findVolunteerByUserId = async (userId) => {
   return data;
 };
 
-export { createVolunteerProfile, findVolunteerByUserId };
+const updateVolunteerProfile = async (userId, { bio, skills, availability }) => {
+  const updates = {};
+  if (bio !== undefined) updates.bio = bio;
+  if (skills !== undefined) updates.skills = skills;
+  if (availability !== undefined) updates.availability = availability;
+
+  if (Object.keys(updates).length === 0) {
+    throw new ApiError(400, "No valid fields provided to update");
+  }
+
+  const { data, error } = await supabase
+    .from("volunteers")
+    .update(updates)
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new ApiError(500, `Failed to update volunteer profile: ${error.message}`);
+  }
+
+  return data;
+};
+
+/** Sets or clears (pass null) the volunteer's ID card file path. */
+const updateIdCardUrl = async (userId, idCardPath) => {
+  const { data, error } = await supabase
+    .from("volunteers")
+    .update({ id_card_url: idCardPath })
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new ApiError(500, `Failed to save ID card: ${error.message}`);
+  }
+
+  return data;
+};
+
+/** Sets or clears (pass null) the volunteer's supporting document file path. */
+const updateDocumentUrl = async (userId, documentPath) => {
+  const { data, error } = await supabase
+    .from("volunteers")
+    .update({ document_url: documentPath })
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new ApiError(500, `Failed to save document: ${error.message}`);
+  }
+
+  return data;
+};
+
+export {
+  createVolunteerProfile,
+  findVolunteerByUserId,
+  updateVolunteerProfile,
+  updateIdCardUrl,
+  updateDocumentUrl,
+};

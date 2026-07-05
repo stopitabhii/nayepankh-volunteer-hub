@@ -17,6 +17,7 @@ create table users (
   email varchar(160) unique not null,
   password_hash text not null,
   phone varchar(20),
+  avatar_url text,
   role user_role not null default 'volunteer',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -32,6 +33,7 @@ create table volunteers (
   skills text[] default '{}',
   availability varchar(120),
   id_card_url text,
+  document_url text,
   status volunteer_status not null default 'pending',
   total_hours numeric(6,2) not null default 0,
   reviewed_by uuid references users(id) on delete set null,
@@ -48,6 +50,7 @@ create table events (
   description text,
   category varchar(60),
   location varchar(160),
+  image_url text,
   event_date timestamptz not null,
   capacity integer not null default 0,
   created_by uuid references users(id) on delete set null,

@@ -4,6 +4,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { errorHandler, notFound } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import volunteerRoutes from "./routes/volunteer.routes.js";
+import eventRoutes from "./routes/event.routes.js";
 
 const app = express();
 
@@ -29,6 +31,9 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/volunteers", volunteerRoutes);
+app.use("/api/events", eventRoutes);
 
 // --- 404 + centralized error handling (MUST be last) ---
 app.use(notFound);
