@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { errorHandler, notFound } from "./middleware/error.middleware.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -27,8 +28,7 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({ success: true, message: "Server is healthy" });
 });
 
-// --- Routes will be mounted here as we build each module ---
-// e.g. app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 // --- 404 + centralized error handling (MUST be last) ---
 app.use(notFound);
